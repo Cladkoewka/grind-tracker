@@ -1,0 +1,24 @@
+services:
+  tracker_db:
+    image: postgres:latest
+    container_name: tracker_postgres_db
+    environment:
+      POSTGRES_USER: tracker-user
+      POSTGRES_PASSWORD: tracker-pass
+      POSTGRES_DB: tracker
+    ports:
+      - "5500:5432"
+    volumes:
+      - tracker-db-data:/var/lib/postgresql/data
+    networks:
+      - tracker_network
+
+volumes:
+  tracker-db-data:
+
+networks:
+  tracker_network:
+    driver: bridge  
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24  
