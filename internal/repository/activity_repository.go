@@ -1,4 +1,4 @@
-package repositrory
+package repository
 
 import (
 	"context"
@@ -31,7 +31,7 @@ func (r *ActivityRepository) Create(ctx context.Context, activity *domain.Activi
 	).Scan(&activity.ID, &activity.CreatedAt)
 }
 
-func (r *SkillRepository) GetByUserID(ctx context.Context, userID int64) ([]domain.Activity, error) {
+func (r *ActivityRepository) GetByUserID(ctx context.Context, userID int64) ([]domain.Activity, error) {
 	query := `
 		SELECT id, user_id, skill_id, type, title, description, xp, created_at
 		FROM activities
@@ -48,7 +48,7 @@ func (r *SkillRepository) GetByUserID(ctx context.Context, userID int64) ([]doma
 	for rows.Next() {
 		var a domain.Activity
 		if err := rows.Scan(
-			&a.ID, &a.UserID, &a.SkillID, &a.Type, &a.Title, &a.Description, &a.XP, &a.CreatedAt
+			&a.ID, &a.UserID, &a.SkillID, &a.Type, &a.Title, &a.Description, &a.XP, &a.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
