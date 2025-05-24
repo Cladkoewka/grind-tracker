@@ -33,9 +33,23 @@ func (r *CommandRouter) RegisterHandlers() {
 		UserService:     r.UserService,
 		ActivityService: r.ActivityService,
 	}
+	progress := &commands.ProgressCommand{
+		UserService:  r.UserService,
+		SkillService: r.SkillService,
+	}
+	about := &commands.AboutCommand{}
 
 	r.Bot.Handle("/start", start.Handle)
+	r.Bot.Handle("/about", about.Handle)
 	r.Bot.Handle("/skills", skills.Handle)
 	r.Bot.Handle("/add_activity", addActivity.Handle)
 	r.Bot.Handle("/export", export.Handle)
+	r.Bot.Handle("/progress", progress.Handle)
+
+	r.Bot.Handle(&commands.BtnAbout, about.Handle)
+	r.Bot.Handle(&commands.BtnAddActivity, addActivity.Handle)
+	r.Bot.Handle(&commands.BtnSkills, skills.Handle)
+	r.Bot.Handle(&commands.BtnProgress, progress.Handle)
+	r.Bot.Handle(&commands.BtnExport, export.Handle)
+
 }

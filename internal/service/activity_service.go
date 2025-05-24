@@ -9,6 +9,7 @@ import (
 type ActivityRepository interface {
 	Create(ctx context.Context, activity *domain.Activity) error
 	GetByUserID(ctx context.Context, userID int64) ([]domain.Activity, error)
+	GetUserSkillXP(ctx context.Context, userID int64) (map[int64]int64, error)
 }
 
 type ActivityService struct {

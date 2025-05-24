@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/Cladkoewka/grind-tracker/internal/domain"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -36,9 +37,9 @@ func (r *ActivityRepository) GetByUserID(ctx context.Context, userID int64) ([]d
 		SELECT id, user_id, skill_id, type, title, description, xp, created_at
 		FROM activities
 		WHERE user_id = $1
-		ORDER BY created_by DESC
+		ORDER BY created_at DESC
 	`
-	rows, err := r.db.Query(ctx, query)
+	rows, err := r.db.Query(ctx, query, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -55,4 +56,37 @@ func (r *ActivityRepository) GetByUserID(ctx context.Context, userID int64) ([]d
 		activities = append(activities, a)
 	}
 	return activities, nil
+}
+
+func (r *ActivityRepository) GetUserSkillXP(ctx context.Context, userID int64) (map[int64]int64, error) {
+	query := `
+		SELECT skill_id, SUM(xp)
+		FROM activities
+		WHERE user_id = $1
+		GROUP BY skill_id
+	`
+
+	rows, err := r.db.Query(ctx, query, userID)
+	if err != nil {
+		return nil, fmt.Errorf("query error: %w", err)
+	}
+	defer rows.Close()
+
+	result := make(map[int64]int64)
+	for rows.Next() {
+		var skillID int64
+		var totalXP int64
+
+		if err := rows.Scan(&skillID, &totalXP); err != nil {
+			return nil, fmt.Errorf("scan error: %w", err)
+		}
+
+		result[skillID] = totalXP
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("row iteration error: %w", err)
+	}
+
+	return result, nil
 }

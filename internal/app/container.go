@@ -39,7 +39,7 @@ func NewContainer() (*Container, error) {
 	activityRepo := repository.NewActivityRepository(db)
 
 	userService := service.NewUserService(userRepo)
-	skillService := service.NewSkillService(skillRepo)
+	skillService := service.NewSkillService(skillRepo, activityRepo)
 	activityService := service.NewActivityService(activityRepo)
 
 	return &Container{
